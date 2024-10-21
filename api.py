@@ -8,10 +8,10 @@ app = Flask(__name__)
 def get_courses(keyword=None):
     # Establish a direct connection to the database
     connection = psycopg2.connect(
-        host='ep-patient-hall-a1ctsw15.ap-southeast-1.pg.koyeb.app',
+        host='ep-green-sound-a1uzn10c.ap-southeast-1.pg.koyeb.app',
         port='5432',
         user='koyeb-adm',
-        password='BvreMcD6S5Oy',
+        password='Mbc1Dxzs5uiS',
         dbname='koyebdb'
     )
     try:
