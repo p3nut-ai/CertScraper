@@ -61,3 +61,4 @@ def courses():
         return jsonify({"error": "No courses found."}), 404
 
 if __name__ == '__main__':
+    pass
