@@ -1,9 +1,17 @@
 from flask import Flask, jsonify, request
 import psycopg2
 from psycopg2 import pool
+import time
 
 app = Flask(__name__)
 
+
+@app.route('/check')
+def your_endpoint():
+    start_time = time.time()
+    # your logic here
+    duration = time.time() - start_time
+    app.logger.info(f"Processed request in {duration:.2f} seconds")
 
 def get_courses(keyword=None):
     try:
