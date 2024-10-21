@@ -11,8 +11,7 @@ env/
 venv/
 *.env
 
-# Image files
-static/*.jpg
+
 
 # Log files
 *.log
