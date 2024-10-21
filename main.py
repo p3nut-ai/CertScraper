@@ -20,25 +20,22 @@ def show_case():
 
     if keyword:
         keyword = keyword.lower()
-        koyeb_url = "https://quickest-gael-certscraper-2d7172a3.koyeb.app/"  # Ensure this is correct
-        response = requests.get(f'{koyeb_url}/courses?keyword={keyword}')
-        print(response)
-        if response.status_code == 200:
-            try:
-                filtered_items = response.json()
-                print(filtered_items)
-                return render_template('showcase.html', items=filtered_items)
-            except ValueError as e:
-                print(f"Error decoding JSON: {e}")
-                return render_template('showcase.html', items=None)
-        elif response.status_code == 404:
-            return render_template('showcase.html', items=None)
-        else:
-            print(f"Error: Received status code {response.status_code}")
+        koyeb_url = "https://quickest-gael-certscraper-2d7172a3.koyeb.app"
+
+        try:
+            response = requests.get(f'{koyeb_url}/courses?keyword={keyword}')
+            response.raise_for_status()  # Raise an error for bad responses
+
+            filtered_items = response.json()
+            return render_template('showcase.html', items=filtered_items)
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error during request: {e}")
             return render_template('showcase.html', items=None)
     else:
         print("No keyword provided.")
         return render_template('showcase.html', items=None)  # Handle the case when no keyword is provided
+
 
 if __name__ == '__main__':
     # app.run(debug=True)
