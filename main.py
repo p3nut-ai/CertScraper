@@ -4,33 +4,29 @@ import socket
 import psycopg2
 from psycopg2 import pool
 import time
-
+import re
 
 app = Flask(__name__)
 
 banner = """
-
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-     $$$$$$\                       $$\      $$$$$$\
-    $$  __$$\                      $$ |    $$  __$$\
-    $$ /  \__| $$$$$$\   $$$$$$\ $$$$$$\   $$ /  \__| $$$$$$$\  $$$$$$\  $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\
-    $$ |      $$  __$$\ $$  __$$\\_$$  _|  \$$$$$$\  $$  _____|$$  __$$\ \____$$\ $$  __$$\ $$  __$$\ $$  __$$\
-    $$ |      $$$$$$$$ |$$ |  \__| $$ |     \____$$\ $$ /      $$ |  \__|$$$$$$$ |$$ /  $$ |$$$$$$$$ |$$ |  \__|
-    $$ |  $$\ $$   ____|$$ |       $$ |$$\ $$\   $$ |$$ |      $$ |     $$  __$$ |$$ |  $$ |$$   ____|$$ |
-    \$$$$$$  |\$$$$$$$\ $$ |       \$$$$  |\$$$$$$  |\$$$$$$$\ $$ |     \$$$$$$$ |$$$$$$$  |\$$$$$$$\ $$ |
-     \______/  \_______|\__|        \____/  \______/  \_______|\__|      \_______|$$  ____/  \_______|\__|
-                                                                                  $$ |
-                                                                                  $$ |
-                                                                                  \__|
-                                        Author : Jonathan
-└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-      \ (•‿•) /
-        |    |
-        ──────
-        |    |
-        |_   |_
+┌──────────────────────────────────────────────────────┐
+                                (
+       (                  ) )\ )
+       )\     (   (    ( /((()/(
+     (((_)   ))\  )(   )\())/(_))
+     )\___  /((_)(()\ (_))/(_))
+    ((/ __|(_))   ((_)| |_ / __|
+     | (__ / -_) | '_||  _|\__ \
+      \___|\___| |_|   \__||___/      Author : Jonathan
+└──────────────────────────────────────────────────────┘
+      \  (•.•) /
+        |     |
+        ───────
+        |     |
+        |_    |_
 
 """
+
 
 
 def get_ipv4_address():
@@ -67,21 +63,31 @@ def show_case():
         return render_template('showcase.html', items=None) # Handle the case when no keyword is provided
 
 
+db_pool = pool.SimpleConnectionPool(
+    1,  # Minimum number of connections
+    10,  # Maximum number of connections
+    user='koyeb-adm',
+    password='Mbc1Dxzs5uiS',
+    host='ep-green-sound-a1uzn10c.ap-southeast-1.pg.koyeb.app',
+    port='5432',
+    database='koyebdb'
+)
+
 def get_courses(keyword=None):
+    connection = None
+    cursor = None
     try:
-        connection = psycopg2.connect(
-            host='ep-green-sound-a1uzn10c.ap-southeast-1.pg.koyeb.app',
-            port='5432',
-            user='koyeb-adm',
-            password='Mbc1Dxzs5uiS',
-            dbname='koyebdb'
-        )
+        connection = db_pool.getconn()  # Get connection from pool
         cursor = connection.cursor()
         print(f"Connected to database, cursor: {cursor}")
+
         if keyword:
+            # Processing keywords for regex
             keywords = [kw.strip() for kw in keyword.split(',')]
-            pattern = '|'.join(keywords)
-            cursor.execute("SELECT * FROM courses WHERE title ILIKE %s", (f"%{pattern}%",))
+            # Create a regex pattern with case-insensitive flag
+            pattern = '|'.join(map(re.escape, keywords))  # Escape any special regex characters
+            regex_query = f"title ~* %s"  # The ~* operator is for case-insensitive regex matching
+            cursor.execute(f"SELECT * FROM courses WHERE {regex_query}", (pattern,))
         else:
             cursor.execute("SELECT * FROM courses")
 
@@ -95,7 +101,7 @@ def get_courses(keyword=None):
         if cursor:
             cursor.close()
         if connection:
-            connection.close()
+            db_pool.putconn(connection)  # Return connection to pool
 
 @app.route('/courses')
 def courses():
@@ -123,5 +129,5 @@ def courses():
 
 
 if __name__ == '__main__':
+    # print(banner)
     # app.run(debug=True)
-    print(banner)
