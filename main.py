@@ -20,9 +20,9 @@ def show_case():
 
     if keyword:
         keyword = keyword.lower()
-        koyeb_url = "http://127.0.0.1:5000"
-        response = requests.get(f'{koyeb_url}/showcase?keyword={keyword}')
-
+        koyeb_url = "https://quickest-gael-certscraper-2d7172a3.koyeb.app/"  # Ensure this is correct
+        response = requests.get(f'{koyeb_url}/courses?keyword={keyword}')
+        print(response)
         if response.status_code == 200:
             try:
                 filtered_items = response.json()
@@ -41,5 +41,5 @@ def show_case():
         return render_template('showcase.html', items=None)  # Handle the case when no keyword is provided
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    pass
+    # app.run(debug=True)
+    # pass
