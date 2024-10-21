@@ -13,6 +13,7 @@ base_url = 'https://coursefolder.net/category/IT-and-Software'
 
 def setup_database():
     connection = None
+    cursor = None
 
     try:
         connection = psycopg2.connect(
@@ -35,10 +36,14 @@ def setup_database():
             )
         ''')
         connection.commit()  # Commit the changes to the database
-        print("Connection to PostgreSQL DB successful")
+        print("Database setup completed successfully.")
     except Exception as e:
-        print(f"The error '{e}' occurred")
-    return connection
+        print(f"The error '{e}' occurred during setup.")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 
 
@@ -91,7 +96,7 @@ def scrape_page(page_number, conn):
                 course_link = title_element['href']
 
                 course_details = scrape_course_details(course_link)
-                print(course_details['link'])
+                # print(course_details['link'])
                 # print(f"Course details for {course_title}: {course_details}")
 
                 if not course_details or 'link' not in course_details or 'description' not in course_details or 'thumbnail_url' not in course_details:
@@ -125,16 +130,65 @@ def scrape_page(page_number, conn):
         return False
 
 
-
-
 def main():
-    with setup_database() as conn:
-        delete_old_courses(conn)
-        for i in range(1, 50):
-            scrape_page(i, conn)
+    connection = None
+    try:
+        # Setup the database (create the table if it doesn't exist)
+        setup_database()
+
+        # Connect to the database
+        connection = psycopg2.connect(
+            host='ep-green-sound-a1uzn10c.ap-southeast-1.pg.koyeb.app',
+            port='5432',
+            user='koyeb-adm',
+            password='Mbc1Dxzs5uiS',
+            dbname='koyebdb'
+        )
+
+        # page_number = 1  # Replace with your desired page number
+        for page in range(1,100):
+            scrape_page(page, connection)  # Scrape and insert data into the database
+        # courses = get_courses()  # Fetching courses, make sure to pass connection if needed
+        # print(f"Courses fetched: {courses}")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if connection:
+            connection.close()
+
+def reset_database():
+    try:
+        connection = psycopg2.connect(
+            host='ep-green-sound-a1uzn10c.ap-southeast-1.pg.koyeb.app',
+            port='5432',
+            user='koyeb-adm',
+            password='Mbc1Dxzs5uiS',
+            dbname='koyebdb'
+        )
+        cursor = connection.cursor()
+
+        # Truncate the table
+        cursor.execute("TRUNCATE TABLE courses RESTART IDENTITY CASCADE;")
+        connection.commit()
+
+        print("Database reset successfully.")
+
+    except Exception as e:
+        print(f"Error resetting database: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+# def main():
+#     with setup_database() as conn:
+#         delete_old_courses(conn)
+#         for i in range(1, 100):
+#             scrape_page(i, conn)
 
 if __name__ == "__main__":
-    conn = setup_database()
-    if conn:
-        main()
-        # conn.close()  # Close the connection if it was successful
+    # reset_database()
+    main()

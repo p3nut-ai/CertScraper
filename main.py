@@ -19,6 +19,10 @@ ipv4 = get_ipv4_address()
 
 @app.route('/')
 def index():
+    return render_template('landpage.html')
+
+@app.route('/homepage')
+def homepage():
     return render_template('index.html')
 
 @app.route('/showcase')
@@ -111,4 +115,5 @@ def courses():
 
 
 if __name__ == '__main__':
-    pass
+    # pass
+    app.run(debug=True)
