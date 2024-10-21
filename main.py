@@ -20,6 +20,7 @@ def show_case():
 
     if keyword:
         keyword = keyword.lower()
+        # koyeb_url = "http://127.0.0.1:5001"
         koyeb_url = "https://quickest-gael-certscraper-2d7172a3.koyeb.app"
 
         try:
@@ -38,4 +39,3 @@ def show_case():
 
 
 if __name__ == '__main__':
-    pass
