@@ -54,12 +54,19 @@ def scrape_course_details(course_link):
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         course_details = {}
-        course_details['link'] = course_link
-        course_details['title'] = soup.find('h1').text.strip() if soup.find('h1') else "No title available"
-        course_details['description'] = soup.find('p').get_text(strip=True) if soup.find('p') else "No description available"
+        course_includes = soup.find('div', class_='content')
 
-        thumbnail_url_element = soup.find('div', class_='thumbnail').find('img')
-        course_details['thumbnail_url'] = thumbnail_url_element['src'].strip() if thumbnail_url_element else "No thumbnail available"
+        if course_includes:
+            udemy_link = course_includes.find('a', class_='edu-btn')
+            course_details['link'] = udemy_link['href'] if udemy_link else "N/A"
+            # Directly store the course details without checking availability
+            # course_details['link'] = course_link  # Keep the course link
+            course_details['title'] = soup.find('h1').text.strip() if soup.find('h1') else "No title available"
+            course_details['description'] = soup.find('p').get_text(strip=True) if soup.find('p') else "No description available"
+
+            # Fetch thumbnail URL
+            thumbnail_url_element = soup.find('div', class_='thumbnail').find('img')
+            course_details['thumbnail_url'] = thumbnail_url_element['src'].strip() if thumbnail_url_element else "No thumbnail available"
 
         return course_details
     else:
@@ -84,7 +91,7 @@ def scrape_page(page_number, conn):
                 course_link = title_element['href']
 
                 course_details = scrape_course_details(course_link)
-
+                print(course_details['link'])
                 # print(f"Course details for {course_title}: {course_details}")
 
                 if not course_details or 'link' not in course_details or 'description' not in course_details or 'thumbnail_url' not in course_details:
