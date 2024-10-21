@@ -5,7 +5,7 @@ __pycache__/
 local/
 data/
 sea/
-
+api.py
 # Virtual environment directories
 env/
 venv/
