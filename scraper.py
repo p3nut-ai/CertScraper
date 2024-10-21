@@ -146,7 +146,7 @@ def main():
         )
 
         # page_number = 1  # Replace with your desired page number
-        for page in range(1,100):
+        for page in range(1,13):
             scrape_page(page, connection)  # Scrape and insert data into the database
         # courses = get_courses()  # Fetching courses, make sure to pass connection if needed
         # print(f"Courses fetched: {courses}")
