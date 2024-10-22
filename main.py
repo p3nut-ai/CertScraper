@@ -14,11 +14,11 @@ unique_ips = set()
 
 # Limit the number of unique IPs allowed
 IP_LIMIT = 200
-visitor_count = 0
+
 @app.before_request
 def limit_ips():
     user_ip = request.remote_addr
-
+    visitor_count = 0
     print(f"Current unique IPs: {unique_ips}")
     if user_ip not in unique_ips:
         if len(unique_ips) < IP_LIMIT:
