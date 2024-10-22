@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,jsonify
+from flask import Flask, render_template, request,jsonify,abort
 import requests
 import socket
 import psycopg2
@@ -9,7 +9,24 @@ import re
 app = Flask(__name__)
 
 
+# Set to store unique IP addresses
+unique_ips = set()
 
+# Limit the number of unique IPs allowed
+IP_LIMIT = 10
+
+@app.before_request
+def limit_ips():
+    user_ip = request.remote_addr
+
+    print(f"Current unique IPs: {unique_ips}")
+    if user_ip not in unique_ips:
+        if len(unique_ips) < IP_LIMIT:
+            unique_ips.add(user_ip)  # Add the IP if under limit
+        else:
+            abort(403)  # Block access once limit is reached
+
+# print(unique_ips)
 
 def get_ipv4_address():
     hostname = socket.gethostname()
@@ -115,5 +132,4 @@ def courses():
 
 
 if __name__ == '__main__':
-    # pass
-    app.run(debug=True)
+    pass
