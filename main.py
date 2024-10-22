@@ -131,6 +131,9 @@ def courses():
     else:
         return jsonify({"error": "No courses found."}), 404
 
+@app.errorhandler(403)
+def forbidden(error):
+    return render_template('403.html'), 403
 
 
 if __name__ == '__main__':
