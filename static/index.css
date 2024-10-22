@@ -120,7 +120,7 @@ padding-left: 20px;
   background-image: url("2.jpg");
   background-size: cover; /* or 'contain' based on your need */
   background-position: center; /* Adjust position if needed */
-  opacity: 0.82; /* Adjust opacity */
+  opacity: 0.2; /* Adjust opacity */
   z-index: 0; /* Position it behind the content */
 }
 .course_container {
