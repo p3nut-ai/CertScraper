@@ -13,7 +13,7 @@ app = Flask(__name__)
 unique_ips = set()
 
 # Limit the number of unique IPs allowed
-IP_LIMIT = 70
+IP_LIMIT = 200
 visitor_count = 0
 @app.before_request
 def limit_ips():
