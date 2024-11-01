@@ -34,6 +34,7 @@ def get_ipv4_address():
     hostname = socket.gethostname()
     return socket.gethostbyname(hostname)
 
+
 ipv4 = get_ipv4_address()
 
 @app.route('/')
