@@ -17,11 +17,11 @@ def setup_database():
 
     try:
         connection = psycopg2.connect(
-            host='ep-green-sound-a1uzn10c.ap-southeast-1.pg.koyeb.app',
-            port='5432',
-            user='koyeb-adm',
-            password='Mbc1Dxzs5uiS',
-            dbname='koyebdb'
+            host='',
+            port='',
+            user='',
+            password='',
+            dbname=''
         )
         cursor = connection.cursor()
         cursor.execute('''
